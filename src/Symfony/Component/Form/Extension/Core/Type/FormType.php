@@ -37,8 +37,18 @@ class FormType extends AbstractType
     {
         $multipart = false;
 
-        foreach ($view->getChildren() as $child) {
-            if ($child->get('multipart')) {
+        foreach ($view->getChildren() as $rowName => $rowView) {
+            foreach($rowView->getChildren() as $fieldName => $fieldView) {
+                $rowTypes = $form->get($rowName)->getTypes();
+                $rowTypeName = $rowTypes[count($rowTypes) - 1];
+                
+                $types = $fieldView->get('types');
+                $types[] = sprintf("_%s_%s", $rowTypeName->getName(), $form->get($rowName)->get($fieldName)->getName());
+                var_dump($types);
+                print "<br/>";
+                $fieldView->set('types', $types);
+            }
+            if ($rowView->get('multipart')) {
                 $multipart = true;
                 break;
             }
